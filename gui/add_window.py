@@ -17,6 +17,8 @@ class AddBookWindow:
         if book_data:
             self.fill_form()
 
+        self.center_window()
+
     def create_ui(self):
         self.root.title("Добавить/Редактировать книгу")
         self.root.geometry("500x600")
@@ -86,6 +88,15 @@ class AddBookWindow:
         
         ttk.Button(btn_frame, text="Сохранить", command=self.save).pack(side=tk.LEFT, padx=5)
         ttk.Button(btn_frame, text="Отмена", command=self.root.destroy).pack(side=tk.LEFT)
+
+    def center_window(self):
+        """Центрирует окно добавления/редактирования фильма."""
+        self.root.update_idletasks() # Обновляем геометрию окна
+        width = self.root.winfo_width()
+        height = self.root.winfo_height()
+        x = (self.root.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.root.winfo_screenheight() // 2) - (height // 2)
+        self.root.geometry(f'{width}x{height}+{x}+{y}')
 
     def fill_form(self):
         """Заполнение формы данными для редактирования"""
@@ -274,6 +285,8 @@ class AddMovieWindow:
         if movie_data:
             self.fill_form()
 
+        self.center_window()
+
     def create_ui(self):
         self.root.title("Добавить/Редактировать фильм")
         self.root.geometry("500x600")
@@ -334,6 +347,15 @@ class AddMovieWindow:
         btn_frame.pack(pady=10)
         ttk.Button(btn_frame, text="Сохранить", command=self.save).pack(side=tk.LEFT, padx=5)
         ttk.Button(btn_frame, text="Отмена", command=self.root.destroy).pack(side=tk.LEFT)
+
+    def center_window(self):
+        """Центрирует окно добавления/редактирования фильма."""
+        self.root.update_idletasks() # Обновляем геометрию окна
+        width = self.root.winfo_width()
+        height = self.root.winfo_height()
+        x = (self.root.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.root.winfo_screenheight() // 2) - (height // 2)
+        self.root.geometry(f'{width}x{height}+{x}+{y}')
 
     def fill_form(self):
         """Заполнение формы данными для редактирования"""

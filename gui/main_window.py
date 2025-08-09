@@ -9,8 +9,10 @@ class MainWindow:
         self.root = root
         self.db = Database('library.db')
         self.create_ui()
+        self.center_main_window()
 
     def open_add_book(self):
+        AddBookWindow(self.root, self.db, parent=self)
         AddElementWindow(self.root, "book")
 
     def edit_element(self):
@@ -56,15 +58,27 @@ class MainWindow:
         file_menu.add_command(label="Добавить книгу", command=self.open_add_book)
         file_menu.add_command(label="Добавить фильм", command=self.open_add_movie)
         
-
         # Фильтры
         filter_frame = ttk.Frame(self.root)
-        filter_frame.pack(pady=10)
+        filter_frame.pack(pady=10, fill=tk.X)
         
         self.status_var = tk.StringVar()
         statuses = ["Все", "Прочитано", "Просмотрено", "В процессе"]
-        ttk.Combobox(filter_frame, textvariable=self.status_var, values=statuses).pack(side=tk.LEFT)
-        ttk.Button(filter_frame, text="Применить фильтр", command=self.apply_filter).pack(side=tk.LEFT)
+        status_combobox = ttk.Combobox(filter_frame, textvariable=self.status_var, values=statuses)
+        status_combobox.pack(side=tk.LEFT, padx=5)
+
+        button_frame = ttk.Frame(filter_frame)
+        button_frame.pack(expand=True, fill=tk.X)
+
+        apply_filter_btn = ttk.Button(button_frame, text="Применить фильтр", command=self.apply_filter)
+        edit_btn = ttk.Button(button_frame, text="Редактировать", command=self.edit_element)
+        delete_btn = ttk.Button(button_frame, text="Удалить", command=self.delete_element)
+        help_btn = ttk.Button(button_frame, text="Справка", command=self.show_help)
+
+        apply_filter_btn.pack(in_=button_frame, side=tk.LEFT, expand=True, fill=tk.X)
+        edit_btn.pack(in_=button_frame, side=tk.LEFT, expand=True, fill=tk.X)
+        delete_btn.pack(in_=button_frame, side=tk.LEFT, expand=True, fill=tk.X)
+        help_btn.pack(side=tk.RIGHT, padx=5)
 
         # Список элементов
         self.tree = ttk.Treeview(self.root, columns=("type", "title", "author/director", "year", "status"))
@@ -77,10 +91,14 @@ class MainWindow:
         self.tree.bind("<Double-1>", self.on_double_click)
         self.tree.pack(fill=tk.BOTH, expand=True)
 
-        edit_btn = ttk.Button(filter_frame, text="Редактировать", command=self.edit_element)
-        edit_btn.pack(side=tk.LEFT)
-        delete_btn = ttk.Button(filter_frame, text="Удалить", command=self.delete_element)
-        delete_btn.pack(side=tk.LEFT)
+    def center_main_window(self):
+        """Центрирует главное окно на экране."""
+        self.root.update_idletasks()  # Обновляем геометрию окна
+        width = self.root.winfo_width()
+        height = self.root.winfo_height()
+        x = (self.root.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.root.winfo_screenheight() // 2) - (height // 2)
+        self.root.geometry(f'{width}x{height}+{x}+{y}')
 
         # Загрузка данных
         self.load_data()
@@ -134,6 +152,7 @@ class MainWindow:
         AddBookWindow(self.root, self.db, parent=self)
 
     def open_add_movie(self):
+        AddMovieWindow(self.root, self.db, parent=self)
         self.tree.delete(*self.tree.get_children())
         books = self.db.fetch_all_books()
         for book in books:
@@ -156,3 +175,29 @@ class MainWindow:
 
     def open_add_movie(self):
         AddMovieWindow(self.root, self.db, parent=self)
+
+    def show_help(self):
+        """Отображает информацию о программе"""
+        help_window = tk.Toplevel(self.root)
+        help_window.title("Справка")
+        # Устанавливаем размеры окна справки
+        window_width = 300
+        window_height = 200
+        # Центрируем окно
+        self.center_window(help_window, window_width, window_height)
+
+        # Информация о программе
+        info_text = f"""
+        Разработчик: GottaGrizzly
+        Связь: gottagrizzlyproject@tuta.io
+        Версия программы: 1.0
+        """
+        ttk.Label(help_window, text=info_text, justify=tk.LEFT).pack(padx=10, pady=10)
+
+    def center_window(self, window, width, height):
+        """Центрирует переданное окно на экране."""
+        screen_width = window.winfo_screenwidth()
+        screen_height = window.winfo_screenheight()
+        x = (screen_width // 2) - (width // 2)
+        y = (screen_height // 2) - (height // 2)
+        window.geometry(f'{width}x{height}+{x}+{y}')
